@@ -21,6 +21,30 @@ local function create_buffer_name(id)
   return def_name .. id
 end
 
+local exclude_texts = { "BOS/EOS" }
+
+local function is_exclude(text)
+  for _, value in ipairs(exclude_texts) do
+    if nil ~= string.find(text, value) then
+      return true
+    end
+  end
+  return false
+end
+
+local function create_output_text(text)
+  local output = {}
+  for index, value in ipairs(text) do
+    if not is_exclude(value) then
+      if #value > 0 then
+        print("insert:", value)
+        table.insert(output, value)
+      end
+    end
+  end
+  return output
+end
+
 local function print_stdout(chan_id, data, name)
   print(chan_id, type(data), name)
   local buf_name = create_buffer_name(chan_id)
@@ -32,10 +56,10 @@ local function print_stdout(chan_id, data, name)
   else
     vim.cmd("b " .. bufId)
   end
-  for index, value in ipairs(data) do
-    print(index, value)
-  end
-  vim.api.nvim_buf_set_lines(buf, -1, -1, true, data)
+  local output = create_output_text(data)
+  vim.api.nvim_buf_set_option(buf, "modifiable", true)
+  vim.api.nvim_buf_set_lines(buf, 0, -1, true, output)
+  vim.api.nvim_buf_set_option(buf, "modifiable", false)
   if bufId == -1 then
     vim.cmd("vsplit")
     local win = vim.api.nvim_get_current_win()
