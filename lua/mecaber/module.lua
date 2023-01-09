@@ -45,7 +45,6 @@ local function create_output_text(text)
 end
 
 local function print_stdout(chan_id, data, name)
-  print(chan_id, type(data), name)
   local buf_name = create_buffer_name(chan_id)
 
   local bufId = vim.fn.bufnr(name)
