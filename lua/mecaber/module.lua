@@ -37,7 +37,6 @@ local function create_output_text(text)
   for index, value in ipairs(text) do
     if not is_exclude(value) then
       if #value > 0 then
-        print("insert:", value)
         table.insert(output, value)
       end
     end
